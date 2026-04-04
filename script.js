@@ -1,29 +1,6 @@
 let array = [];
 let speed = 50;
 
-// Step mode (leave as it is)
-let stepMode = false;
-let stepResolve;
-
-function waitStep() {
-  return new Promise(resolve => {
-    stepResolve = resolve;
-  });
-}
-
-function toggleStep() {
-  stepMode = !stepMode;
-  alert("Step Mode: " + (stepMode ? "ON" : "OFF"));
-}
-
-document.addEventListener("keydown", () => {
-  if (stepMode && stepResolve) {
-    stepResolve();
-    stepResolve = null;
-  }
-});
-
-// Speed control
 document.getElementById("speedSlider").addEventListener("input", function () {
   speed = this.value;
 });
@@ -32,13 +9,12 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Generate array
 function generateArray() {
   array = [];
   let container = document.getElementById("array");
   container.innerHTML = "";
 
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 50; i++) {
     let value = Math.floor(Math.random() * 300) + 20;
     array.push(value);
 
@@ -50,11 +26,7 @@ function generateArray() {
   }
 }
 
-// 🔥 BUBBLE SORT WITH TIMER
 async function bubbleSort() {
-
-  let start = Date.now(); // ⏱ start time
-
   let bars = document.querySelectorAll(".bar");
 
   for (let i = 0; i < array.length; i++) {
@@ -78,14 +50,8 @@ async function bubbleSort() {
 
     bars[array.length - i - 1].style.background = "green";
   }
-
-  let end = Date.now(); // ⏱ end time
-
-  document.getElementById("timer").innerText =
-    "Time Taken: " + (end - start) + " ms";
 }
 
-// Quick Sort (same as before)
 async function quickSort(arr, low, high) {
   if (low < high) {
     let pi = await partition(arr, low, high);
@@ -121,9 +87,6 @@ async function partition(arr, low, high) {
 
   bars[i + 1].style.height = arr[i + 1] + "px";
   bars[high].style.height = arr[high] + "px";
-
-  bars[high].style.background = "cyan";
-  bars[i + 1].style.background = "green";
 
   return i + 1;
 }
