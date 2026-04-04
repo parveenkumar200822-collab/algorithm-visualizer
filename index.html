@@ -1,87 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Algorithm Visualizer</title>
-  <style>
-    body {
-      text-align: center;
-      background: black;
-      color: white;
-    }
-    #array {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      height: 400px;
-      margin-top: 20px;
-    }
-    .bar {
-      width: 8px;
-      margin: 1px;
-      background: cyan;
-    }
-  </style>
-</head>
+<h1>Sorting Algorithm Visualizer</h1>
 
-<body>
+<input type="text" id="manualInput" placeholder="Enter numbers (e.g. 5,3,8,1)">
+<button onclick="useManualInput()">Use Input</button>
 
-<h1>Sorting Visualizer</h1>
+<br><br>
 
-<button onclick="generateArray()">Generate</button>
+<button onclick="generateArray()">Generate Random</button>
 <button onclick="bubbleSort()">Bubble Sort</button>
 
 <br><br>
 
+Speed:
+<input type="range" id="speedSlider" min="10" max="200" value="50">
+
 <div id="array"></div>
-
-<script>
-let array = [];
-
-function sleep(ms){
-  return new Promise(r => setTimeout(r, ms));
-}
-
-function generateArray(){
-  array=[];
-  let container=document.getElementById("array");
-  container.innerHTML="";
-
-  for(let i=0;i<40;i++){
-    let value=Math.floor(Math.random()*300)+20;
-    array.push(value);
-
-    let bar=document.createElement("div");
-    bar.classList.add("bar");
-    bar.style.height=value+"px";
-
-    container.appendChild(bar);
-  }
-}
-
-async function bubbleSort(){
-  let bars=document.querySelectorAll(".bar");
-
-  for(let i=0;i<array.length;i++){
-    for(let j=0;j<array.length-i-1;j++){
-
-      bars[j].style.background="yellow";
-      bars[j+1].style.background="yellow";
-
-      await sleep(50);
-
-      if(array[j]>array[j+1]){
-        [array[j],array[j+1]]=[array[j+1],array[j]];
-
-        bars[j].style.height=array[j]+"px";
-        bars[j+1].style.height=array[j+1]+"px";
-      }
-
-      bars[j].style.background="cyan";
-      bars[j+1].style.background="cyan";
-    }
-  }
-}
-</script>
-
-</body>
-</html>
