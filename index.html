@@ -1,5 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Algorithm Visualizer</title>
+
+  <style>
+    body {
+      text-align: center;
+      background: black;
+      color: white;
+      font-family: Arial;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    #array {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      height: 400px;
+      margin-top: 20px;
+    }
+
+    .bar {
+      width: 10px;
+      margin: 2px;
+      background: cyan;
+    }
+
+    input {
+      padding: 5px;
+      margin: 5px;
+    }
+
+    button {
+      padding: 8px;
+      margin: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
 <h1>Sorting Algorithm Visualizer</h1>
 
+<!-- 🔥 Manual Input -->
 <input type="text" id="manualInput" placeholder="Enter numbers (e.g. 5,3,8,1)">
 <button onclick="useManualInput()">Use Input</button>
 
@@ -14,3 +61,89 @@ Speed:
 <input type="range" id="speedSlider" min="10" max="200" value="50">
 
 <div id="array"></div>
+
+<script>
+let array = [];
+let speed = 50;
+
+document.getElementById("speedSlider").addEventListener("input", function () {
+  speed = this.value;
+});
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// 🔥 RANDOM ARRAY
+function generateArray() {
+  array = [];
+  let container = document.getElementById("array");
+  container.innerHTML = "";
+
+  for (let i = 0; i < 40; i++) {
+    let value = Math.floor(Math.random() * 100) + 10;
+    array.push(value);
+
+    let bar = document.createElement("div");
+    bar.classList.add("bar");
+    bar.style.height = value * 3 + "px";
+
+    container.appendChild(bar);
+  }
+}
+
+// 🔥 MANUAL INPUT
+function useManualInput() {
+  let input = document.getElementById("manualInput").value;
+
+  let values = input.split(",").map(Number);
+
+  array = [];
+  let container = document.getElementById("array");
+  container.innerHTML = "";
+
+  for (let i = 0; i < values.length; i++) {
+    let value = values[i];
+
+    if (isNaN(value)) continue;
+
+    array.push(value);
+
+    let bar = document.createElement("div");
+    bar.classList.add("bar");
+    bar.style.height = value * 5 + "px"; // 🔥 FIXED SCALE
+
+    container.appendChild(bar);
+  }
+}
+
+// 🔥 BUBBLE SORT
+async function bubbleSort() {
+  let bars = document.querySelectorAll(".bar");
+
+  for (let i = 0; i < array.length; i++) {
+    for (let j = 0; j < array.length - i - 1; j++) {
+
+      bars[j].style.background = "yellow";
+      bars[j + 1].style.background = "yellow";
+
+      await sleep(speed);
+
+      if (array[j] > array[j + 1]) {
+        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+
+        bars[j].style.height = array[j] * 5 + "px";
+        bars[j + 1].style.height = array[j + 1] * 5 + "px";
+      }
+
+      bars[j].style.background = "cyan";
+      bars[j + 1].style.background = "cyan";
+    }
+
+    bars[array.length - i - 1].style.background = "green";
+  }
+}
+</script>
+
+</body>
+</html>
