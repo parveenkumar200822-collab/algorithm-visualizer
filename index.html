@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Algorithm Visualizer</title>
+  <title>Sorting Visualizer</title>
 
   <style>
     body {
-      text-align: center;
-      background: black;
+      background: #0f172a;
       color: white;
+      text-align: center;
       font-family: Arial;
     }
 
@@ -15,29 +15,47 @@
       margin-top: 20px;
     }
 
+    input, button {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background: #22c55e;
+      color: white;
+      cursor: pointer;
+    }
+
     #array {
       display: flex;
       justify-content: center;
       align-items: flex-end;
       height: 400px;
-      margin-top: 20px;
+      margin-top: 30px;
+      border: 1px solid #334155;
     }
 
     .bar {
-      width: 10px;
-      margin: 2px;
+      width: 20px;
+      margin: 3px;
       background: cyan;
+      text-align: center;
+      font-size: 12px;
+      color: black;
     }
 
-    input {
-      padding: 5px;
-      margin: 5px;
+    #status {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #facc15;
     }
 
-    button {
-      padding: 8px;
-      margin: 5px;
-      cursor: pointer;
+    #timer {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #38bdf8;
     }
   </style>
 </head>
@@ -46,103 +64,103 @@
 
 <h1>Sorting Algorithm Visualizer</h1>
 
-<!-- 🔥 Manual Input -->
-<input type="text" id="manualInput" placeholder="Enter numbers (e.g. 5,3,8,1)">
-<button onclick="useManualInput()">Use Input</button>
-
-<br><br>
-
-<button onclick="generateArray()">Generate Random</button>
+<input id="manualInput" placeholder="5,3,8,1,6">
+<button onclick="useInput()">Use Input</button>
+<br>
+<button onclick="generate()">Generate Random</button>
 <button onclick="bubbleSort()">Bubble Sort</button>
 
-<br><br>
-
-Speed:
-<input type="range" id="speedSlider" min="10" max="200" value="50">
+<div id="status">Status: Waiting...</div>
+<div id="timer">Time: 0 ms</div>
 
 <div id="array"></div>
 
 <script>
-let array = [];
-let speed = 50;
 
-document.getElementById("speedSlider").addEventListener("input", function () {
-  speed = this.value;
-});
+let arr = [];
+let delay = 200;
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function sleep(ms){
+  return new Promise(r => setTimeout(r, ms));
 }
 
-// 🔥 RANDOM ARRAY
-function generateArray() {
-  array = [];
+function updateBars(){
   let container = document.getElementById("array");
   container.innerHTML = "";
 
-  for (let i = 0; i < 40; i++) {
-    let value = Math.floor(Math.random() * 100) + 10;
-    array.push(value);
-
+  for(let i=0;i<arr.length;i++){
     let bar = document.createElement("div");
     bar.classList.add("bar");
-    bar.style.height = value * 3 + "px";
-
+    bar.style.height = (arr[i]*10 + 20) + "px";
+    bar.innerText = arr[i];
     container.appendChild(bar);
   }
 }
 
-// 🔥 MANUAL INPUT
-function useManualInput() {
+function generate(){
+  arr = [];
+  for(let i=0;i<20;i++){
+    arr.push(Math.floor(Math.random()*30)+5);
+  }
+  updateBars();
+}
+
+function useInput(){
   let input = document.getElementById("manualInput").value;
-
-  let values = input.split(",").map(Number);
-
-  array = [];
-  let container = document.getElementById("array");
-  container.innerHTML = "";
-
-  for (let i = 0; i < values.length; i++) {
-    let value = values[i];
-
-    if (isNaN(value)) continue;
-
-    array.push(value);
-
-    let bar = document.createElement("div");
-    bar.classList.add("bar");
-    bar.style.height = value * 5 + "px"; // 🔥 FIXED SCALE
-
-    container.appendChild(bar);
-  }
+  arr = input.split(",").map(x => parseInt(x)).filter(x => !isNaN(x));
+  updateBars();
 }
 
-// 🔥 BUBBLE SORT
-async function bubbleSort() {
-  let bars = document.querySelectorAll(".bar");
+async function bubbleSort(){
 
-  for (let i = 0; i < array.length; i++) {
-    for (let j = 0; j < array.length - i - 1; j++) {
+  let start = Date.now();
+
+  let bars = document.getElementsByClassName("bar");
+
+  for(let i=0;i<arr.length;i++){
+
+    for(let j=0;j<arr.length-i-1;j++){
+
+      document.getElementById("status").innerText =
+        `Comparing ${arr[j]} and ${arr[j+1]}`;
 
       bars[j].style.background = "yellow";
-      bars[j + 1].style.background = "yellow";
+      bars[j+1].style.background = "yellow";
 
-      await sleep(speed);
+      await sleep(delay);
 
-      if (array[j] > array[j + 1]) {
-        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+      if(arr[j] > arr[j+1]){
 
-        bars[j].style.height = array[j] * 5 + "px";
-        bars[j + 1].style.height = array[j + 1] * 5 + "px";
+        document.getElementById("status").innerText =
+          `Swapping ${arr[j]} and ${arr[j+1]}`;
+
+        bars[j].style.background = "red";
+        bars[j+1].style.background = "red";
+
+        await sleep(delay);
+
+        let temp = arr[j];
+        arr[j] = arr[j+1];
+        arr[j+1] = temp;
+
+        updateBars();
+        bars = document.getElementsByClassName("bar");
       }
 
       bars[j].style.background = "cyan";
-      bars[j + 1].style.background = "cyan";
+      bars[j+1].style.background = "cyan";
     }
 
-    bars[array.length - i - 1].style.background = "green";
+    bars[arr.length-i-1].style.background = "green";
   }
+
+  let end = Date.now();
+  document.getElementById("timer").innerText =
+    `Time: ${end - start} ms`;
+
+  document.getElementById("status").innerText = "Sorting Completed ✅";
 }
+
 </script>
 
 </body>
