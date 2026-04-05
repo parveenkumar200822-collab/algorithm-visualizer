@@ -18,7 +18,7 @@
     input, button {
       padding: 8px;
       margin: 5px;
-      border-radius: 5px;
+      border-radius: 6px;
       border: none;
     }
 
@@ -26,6 +26,12 @@
       background: #22c55e;
       color: white;
       cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: #16a34a;
     }
 
     #array {
@@ -47,15 +53,15 @@
     }
 
     #status {
+      font-size: 20px;
       margin-top: 15px;
-      font-size: 18px;
-      color: #facc15;
+      color: yellow;
     }
 
     #timer {
-      margin-top: 10px;
-      font-size: 16px;
-      color: #38bdf8;
+      font-size: 18px;
+      margin-top: 5px;
+      color: cyan;
     }
   </style>
 </head>
@@ -103,7 +109,7 @@ function updateBars(){
   }
 }
 
-// Generate random array
+// Generate random values
 function generate(){
   arr = [];
   for(let i=0;i<25;i++){
@@ -112,7 +118,7 @@ function generate(){
   updateBars();
 }
 
-// Use manual input
+// Manual input
 function useInput(){
   let input = document.getElementById("manualInput").value;
 
@@ -134,7 +140,7 @@ async function bubbleSort(){
     for(let j=0;j<arr.length-i-1;j++){
 
       document.getElementById("status").innerText =
-        "Comparing " + arr[j] + " and " + arr[j+1];
+        "Comparing: " + arr[j] + " vs " + arr[j+1];
 
       bars[j].style.background = "yellow";
       bars[j+1].style.background = "yellow";
@@ -144,14 +150,13 @@ async function bubbleSort(){
       if(arr[j] > arr[j+1]){
 
         document.getElementById("status").innerText =
-          "Swapping " + arr[j] + " and " + arr[j+1];
+          "Swapping: " + arr[j] + " ↔ " + arr[j+1];
 
         bars[j].style.background = "red";
         bars[j+1].style.background = "red";
 
         await sleep(delay);
 
-        // Swap
         let temp = arr[j];
         arr[j] = arr[j+1];
         arr[j+1] = temp;
@@ -173,7 +178,7 @@ async function bubbleSort(){
     "Time: " + (end - start) + " ms";
 
   document.getElementById("status").innerText =
-    "Sorting Completed ✅";
+    "✅ Sorting Completed";
 }
 
 </script>
