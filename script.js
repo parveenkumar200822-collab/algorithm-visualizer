@@ -1,104 +1,94 @@
 let arr = [];
-let delay = 150;
+let delay = 100;
 
-// sleep function
-function sleep(ms){
-  return new Promise(r => setTimeout(r, ms));
+// 🎲 Generate random array
+function generateRandom() {
+    arr = [];
+    for (let i = 0; i < 50; i++) {
+        arr.push(Math.floor(Math.random() * 100) + 5); // values 5–105
+    }
+    drawBars();
 }
 
-// 🔥 FINAL FIXED SCALING
-function updateBars(){
-  let container = document.getElementById("array");
-  container.innerHTML = "";
-
-  if(arr.length === 0) return;
-
-  let maxVal = Math.max(...arr);
-  let containerHeight = 350;
-
-  for(let i = 0; i < arr.length; i++){
-    let bar = document.createElement("div");
-    bar.classList.add("bar");
-
-    let height = Math.floor((arr[i] / maxVal) * containerHeight);
-
-    if(height > containerHeight) height = containerHeight;
-
-    bar.style.height = height + "px";
-    bar.innerText = arr[i];
-
-    container.appendChild(bar);
-  }
+// 🧾 Take manual input
+function useInput() {
+    let input = document.getElementById("inputArray").value;
+    arr = input.split(",").map(Number);
+    drawBars();
 }
 
-// generate random
-function generate(){
-  arr = [];
-  for(let i=0;i<25;i++){
-    arr.push(Math.floor(Math.random()*100)+10);
-  }
-  updateBars();
+// 🎨 Draw bars (FIXED SCALING)
+function drawBars(highlight = [], sorted = []) {
+    const container = document.getElementById("array-container");
+    container.innerHTML = "";
+
+    let maxVal = Math.max(...arr, 100); // 🔥 FIX: scaling issue
+
+    arr.forEach((value, index) => {
+        let bar = document.createElement("div");
+        bar.classList.add("bar");
+
+        // 🔥 FIX: scale height properly
+        bar.style.height = (value / maxVal) * 300 + "px";
+
+        // Colors
+        if (sorted.includes(index)) {
+            bar.style.background = "green";
+        } else if (highlight.includes(index)) {
+            bar.style.background = "yellow";
+        } else {
+            bar.style.background = "cyan";
+        }
+
+        // Optional value label
+        bar.innerText = value;
+
+        container.appendChild(bar);
+    });
 }
 
-// manual input
-function useInput(){
-  let input = document.getElementById("manualInput").value;
-
-  arr = input.split(",")
-             .map(x => parseInt(x))
-             .filter(x => !isNaN(x));
-
-  updateBars();
+// ⏳ Sleep (for animation)
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// bubble sort
-async function bubbleSort(){
+// 🔥 Bubble Sort (FINAL)
+async function bubbleSort() {
+    let start = Date.now();
 
-  let start = Date.now();
-  let bars = document.getElementsByClassName("bar");
+    let n = arr.length;
+    let sorted = [];
 
-  for(let i=0;i<arr.length;i++){
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
 
-    for(let j=0;j<arr.length-i-1;j++){
+            drawBars([j, j + 1], sorted);
+            await sleep(delay);
 
-      document.getElementById("status").innerText =
-        "Comparing: " + arr[j] + " vs " + arr[j+1];
+            if (arr[j] > arr[j + 1]) {
+                // swap
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
 
-      bars[j].style.background = "yellow";
-      bars[j+1].style.background = "yellow";
+                drawBars([j, j + 1], sorted);
+                await sleep(delay);
+            }
+        }
 
-      await sleep(delay);
-
-      if(arr[j] > arr[j+1]){
-
-        document.getElementById("status").innerText =
-          "Swapping: " + arr[j] + " ↔ " + arr[j+1];
-
-        bars[j].style.background = "red";
-        bars[j+1].style.background = "red";
-
-        await sleep(delay);
-
-        let temp = arr[j];
-        arr[j] = arr[j+1];
-        arr[j+1] = temp;
-
-        updateBars();
-        bars = document.getElementsByClassName("bar");
-      }
-
-      bars[j].style.background = "cyan";
-      bars[j+1].style.background = "cyan";
+        // mark sorted
+        sorted.push(n - i - 1);
     }
 
-    bars[arr.length-i-1].style.background = "green";
-  }
+    // 🔥 FINAL: ALL GREEN
+    drawBars([], [...Array(n).keys()]);
 
-  let end = Date.now();
+    let end = Date.now();
 
-  document.getElementById("timer").innerText =
-    "Time: " + (end - start) + " ms";
+    document.getElementById("status").innerText = "✅ Sorting Completed";
+    document.getElementById("timer").innerText =
+        "Time: " + (end - start) + " ms";
+}
 
-  document.getElementById("status").innerText =
-    "✅ Sorting Completed";
+// 🎚 Speed control
+function changeSpeed(value) {
+    delay = 200 - value;
 }
