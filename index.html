@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Sorting Visualizer</title>
+  <title>Sorting Algorithm Visualizer</title>
 
   <style>
     body {
@@ -38,8 +38,8 @@
     }
 
     .bar {
-      width: 20px;
-      margin: 3px;
+      width: 18px;
+      margin: 2px;
       background: cyan;
       text-align: center;
       font-size: 12px;
@@ -66,7 +66,9 @@
 
 <input id="manualInput" placeholder="5,3,8,1,6">
 <button onclick="useInput()">Use Input</button>
+
 <br>
+
 <button onclick="generate()">Generate Random</button>
 <button onclick="bubbleSort()">Bubble Sort</button>
 
@@ -78,12 +80,14 @@
 <script>
 
 let arr = [];
-let delay = 200;
+let delay = 150;
 
+// Sleep function
 function sleep(ms){
   return new Promise(r => setTimeout(r, ms));
 }
 
+// Create bars
 function updateBars(){
   let container = document.getElementById("array");
   container.innerHTML = "";
@@ -91,30 +95,38 @@ function updateBars(){
   for(let i=0;i<arr.length;i++){
     let bar = document.createElement("div");
     bar.classList.add("bar");
+
     bar.style.height = (arr[i]*10 + 20) + "px";
     bar.innerText = arr[i];
+
     container.appendChild(bar);
   }
 }
 
+// Generate random array
 function generate(){
   arr = [];
-  for(let i=0;i<20;i++){
+  for(let i=0;i<25;i++){
     arr.push(Math.floor(Math.random()*30)+5);
   }
   updateBars();
 }
 
+// Use manual input
 function useInput(){
   let input = document.getElementById("manualInput").value;
-  arr = input.split(",").map(x => parseInt(x)).filter(x => !isNaN(x));
+
+  arr = input.split(",")
+             .map(x => parseInt(x))
+             .filter(x => !isNaN(x));
+
   updateBars();
 }
 
+// Bubble Sort
 async function bubbleSort(){
 
   let start = Date.now();
-
   let bars = document.getElementsByClassName("bar");
 
   for(let i=0;i<arr.length;i++){
@@ -122,7 +134,7 @@ async function bubbleSort(){
     for(let j=0;j<arr.length-i-1;j++){
 
       document.getElementById("status").innerText =
-        `Comparing ${arr[j]} and ${arr[j+1]}`;
+        "Comparing " + arr[j] + " and " + arr[j+1];
 
       bars[j].style.background = "yellow";
       bars[j+1].style.background = "yellow";
@@ -132,13 +144,14 @@ async function bubbleSort(){
       if(arr[j] > arr[j+1]){
 
         document.getElementById("status").innerText =
-          `Swapping ${arr[j]} and ${arr[j+1]}`;
+          "Swapping " + arr[j] + " and " + arr[j+1];
 
         bars[j].style.background = "red";
         bars[j+1].style.background = "red";
 
         await sleep(delay);
 
+        // Swap
         let temp = arr[j];
         arr[j] = arr[j+1];
         arr[j+1] = temp;
@@ -155,10 +168,12 @@ async function bubbleSort(){
   }
 
   let end = Date.now();
-  document.getElementById("timer").innerText =
-    `Time: ${end - start} ms`;
 
-  document.getElementById("status").innerText = "Sorting Completed ✅";
+  document.getElementById("timer").innerText =
+    "Time: " + (end - start) + " ms";
+
+  document.getElementById("status").innerText =
+    "Sorting Completed ✅";
 }
 
 </script>
