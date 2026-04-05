@@ -88,32 +88,38 @@
 let arr = [];
 let delay = 150;
 
-// Sleep function
+// Sleep
 function sleep(ms){
   return new Promise(r => setTimeout(r, ms));
 }
 
-// Create bars
+// 🔥 FIXED SCALING FUNCTION
 function updateBars(){
   let container = document.getElementById("array");
   container.innerHTML = "";
+
+  if(arr.length === 0) return;
+
+  let maxVal = Math.max(...arr);
 
   for(let i=0;i<arr.length;i++){
     let bar = document.createElement("div");
     bar.classList.add("bar");
 
-    bar.style.height = (arr[i]*10 + 20) + "px";
+    let height = (arr[i] / maxVal) * 350; // 🔥 scaling fix
+
+    bar.style.height = height + "px";
     bar.innerText = arr[i];
 
     container.appendChild(bar);
   }
 }
 
-// Generate random values
+// Random
 function generate(){
   arr = [];
   for(let i=0;i<25;i++){
-    arr.push(Math.floor(Math.random()*30)+5);
+    arr.push(Math.floor(Math.random()*100)+10);
   }
   updateBars();
 }
